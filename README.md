@@ -17,21 +17,21 @@ Should be determined experimentally (although recommendations for worst-case dat
 
 1. r: closeness threshold.
 2. c: multiplicative gap for (r, cr)-ANN. note that c > 1.
-3. w: discretization chunk size. Recall that the e2lsh hash function is defined as $h_{a,b}(p) = \lfloor (a\cdot p + b)/w \rfloor$, where $a$ is a Gaussian random vector and $b$ is a uniformly random number taking values in $[0,w]$.
+3. w: discretization chunk size. Recall that the e2lsh hash function is defined as h_{a,b}(p) = \lfloor (a\cdot p + b)/w \rfloor​, where a is a Gaussian random vector and b is a uniformly random number taking values in [0,w]​.
 4. k: number of bits for each hash function (table). larger k amplifies the collision probability **gap** between r-close points and cr-far points. However, large k requires large L since it brings down the collision probability (for both close and far points), a.k.a many empty buckets.
 5. L: number of hash tables.
 
 ### Theoretical recommendation
 
-Assume $r=1$ without loss of generality (can scale the entire dataset by $r$). For any point $p,q \in \mathbb{R}^d$ s.t. $\|p-q\|_2 \le 1$, there exists at least one collision between $p$ and $q$ among $L$ hash tables $\{g_j : \mathbb{R}^d \rightarrow \mathbb{Z}^k\}_{j=1}^L$ with probability $1-\delta$ if
-$$
-L \ge \frac{\ln(1/\delta)}{-\ln(1-P_1^k)}\;.
-$$
-**Caveat**: $P_1 = P_1(w,c)$ is a bit complicated to determine. Need numerical integration to determine this value.  Better to just run grid search over w, c, k, L.
+Assume r=1​ without loss of generality (can scale the entire dataset by r). For any point p,q \in R^d s.t. dist(p,q) \le 1, there exists at least one collision between p​ and q among L hash tables {g_j : R^d -> Z^k\} with probability 1-\delta if
+
+L > \frac{\ln(1/\delta)}{-\ln(1-P_1^k)}.
+
+**Caveat**: P_1 = P_1(w,c)​ is a bit complicated to determine. It's simpler to just run grid search over w, c, k, L.
 
 ## Examples
 
-Let $X \in \mathbb{R}^{d \times N}$ be the dataset. To construct L=30 hash tables, each with k=25 bits,
+Let X \in R^{d \times N}​ be the dataset. To construct L=30 hash tables, each with k=25 bits,
 
 ```matlab
 load data;
@@ -47,7 +47,7 @@ To perform a lookup on query q on LSH data structure T, which consists of L hash
 [nnlsh,numcand]=lshlookup(q,X,T,'k',10,'sel','best');
 ```
 
-`nnlsh` is an array of $k$-nearest neighbors (k=10) sorted by distance from query q.
+`nnlsh` is an array of k​-nearest neighbors (k=10) sorted by distance from query q.
 
 To check the health of the created LSH hash table T, use `lshstats.m`
 
@@ -57,7 +57,7 @@ Xtest=X(:,1:1000);
 lshstats(T,'test',X,Xtest,m);
 ```
 
-Returns median, max, and expected occupancy of the buckets in each hash table. It also returns the mean and max number of candidates returned for query points in `Xtest`. Lastly, it reports the number of failures for retrieving the $m$-nearest neighbor for each query point in `Xtest`.
+Returns median, max, and expected occupancy of the buckets in each hash table. It also returns the mean and max number of candidates returned for query points in `Xtest`. Lastly, it reports the number of failures for retrieving the m-nearest neighbor for each query point in `Xtest`.
 
 ## Function explanations
 
@@ -89,9 +89,9 @@ Returns median, max, and expected occupancy of the buckets in each hash table. I
 
    **varargs**
 
-   - `k`: returns $k$ nearest neighbors (BAD NOTATION, different from k used in LSH hash table).
+   - `k`: returns k​ nearest neighbors (BAD NOTATION, different from k used in LSH hash table).
    - `sel`: selects closest neighbors if set to "best". Otherwise, selects random neighbors. random neighbors makes query time faster, but the quality of retrieval can be pretty bad.
-   - `r`: distance cutoff threshold. will not return any neighbors exceeding distance $r$ (even for random selection).
+   - `r`: distance cutoff threshold. will not return any neighbors exceeding distance r (even for random selection).
 
 3. `[mi,ma,me]=lshstats(T, B, xref, xtst, minNN)`
 
@@ -99,7 +99,7 @@ Returns median, max, and expected occupancy of the buckets in each hash table. I
 
    - `xref`: reference dataset
    - `xtst`: test query points
-   - `minNN`: integer which specifies desired nearest neighbor rank $m$-NN. If specified, lshstat returns the number of failed query points for which the `minNN`-th nearest neighbor was not retrieved.
+   - `minNN`: integer which specifies desired nearest neighbor rank m-NN. If specified, lshstat returns the number of failed query points for which the `minNN`-th nearest neighbor was not retrieved.
 
    **output**
 
