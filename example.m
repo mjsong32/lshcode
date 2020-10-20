@@ -1,20 +1,35 @@
 %% Make LSH
 n = 1e5;
-d = 2;
+d = 10;
 X = -1+2*rand(n,d);
-k = 20;
-L = 20;
-T = lsh('e2lsh',L,k,d,X','range',10,'w',-100);
-%% Make query with LSH
-q = -1+2*rand(1,2);
+k = 10;
+L = 10;
+T = lsh('e2lsh',L,k,d,X','range',10,'w',-50);
+%% Make queries
+n_test = 1e2;
+q = -1+2*rand(n_test,d);
+%% LSH lookup
 tic;
-[nnlsh,numcand]=lshlookup(q',X',T,'k',1,'sel','best');
+for i=1:n_test
+    [nnlsh,numcand]=lshlookup(q(i,:)',X',T,'k',1,'sel','best');
+end
 toc;
-r_lsh=sum((X(nnlsh,:)-q).^2);
+rnd_idx=randi(n_test);
+r_lsh=sum((X(nnlsh,:)-q(rnd_idx,:)).^2);
 fprintf('LSH l2 distance: %d\n',r_lsh);
+%% Faster LSH lookup (return only the top-1)
+tic;
+for i=1:n_test
+    [nnlsh,numcand]=fastlshlookup(q(i,:)',X',T,'k',1,'sel','best');
+end
+toc;
+r_lsh=sum((X(nnlsh,:)-q(rnd_idx,:)).^2);
+fprintf('fast LSH l2 distance: %d\n',r_lsh);
 %% Nearest neighbor 
 tic;
-[r_l1,min_idx] = min(sum(abs(X-q),2)); % note that this is l1 distance
+for i=1:n_test
+    [r_l1,min_idx] = min(sum(abs(X-q(i,:)),2)); % note that this is l1 distance
+end
 toc;
-r_l2=sum((X(min_idx,:)-q).^2);
+r_l2=sum((X(min_idx,:)-q(rnd_idx,:)).^2);
 fprintf('L1-NN l2 distance: %d\n',r_l2);
