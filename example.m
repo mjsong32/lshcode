@@ -9,12 +9,12 @@ T = lsh('e2lsh',L,k,d,X','range',10,'w',-100);
 q = -1+2*rand(1,2);
 tic;
 [nnlsh,numcand]=lshlookup(q',X',T,'k',1,'sel','best');
+toc;
 r_lsh=sum((X(nnlsh,:)-q).^2);
 fprintf('LSH l2 distance: %d\n',r_lsh);
-toc;
 %% Nearest neighbor 
 tic;
 [r_l1,min_idx] = min(sum(abs(X-q),2)); % note that this is l1 distance
+toc;
 r_l2=sum((X(min_idx,:)-q).^2);
 fprintf('L1-NN l2 distance: %d\n',r_l2);
-toc;
