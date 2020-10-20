@@ -49,7 +49,7 @@ To perform a lookup on query q on LSH data structure T, which consists of L hash
 
 `nnlsh` is an array of k​-nearest neighbors (k=10) sorted by distance from query q.
 
-To check the health of the created LSH hash table T, use `lshstats.m`
+To check the health of the created LSH data structure T, use `lshstats.m`
 
 ```matlab
 m=2;
