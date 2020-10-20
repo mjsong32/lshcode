@@ -1,4 +1,4 @@
-This directory contains an simple implementation of e2lsh (exact euclidean lsh). It is a minor modification of Greg Shakhnarovich's LSH codes.
+This directory contains an simple implementation of e2lsh (exact euclidean lsh). It is a very minor modification of Greg Shakhnarovich's [LSH codes](https://ttic.uchicago.edu/~gregory/download.html).
 
 ## Main files
 
