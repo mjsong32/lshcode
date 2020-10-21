@@ -45,6 +45,7 @@ l = length(T);
 iNN=[];
 
 % find the union of buckets in all tables that match query
+fprintf('hash
 for j=1:l
   % look up T_j
   % buck is the # of bucket in T{j}
@@ -52,11 +53,6 @@ for j=1:l
   % find the bucket in j-th table
   key = lshhash(buck);
   ihash = T(j).bhash{key}; % possible matching buckets
-  
-  % CHECKS
-  %fprintf('buck = %d\n',buck);
-  %fprintf('ihash = %d\n',ihash);
-  %fprintf('j= %d\n',j);
   
   if (~isempty(ihash)) % nothing matches -> MJ: multiple matches?
     b = ihash(find(all(bsxfun(@eq,buck,T(j).buckets(ihash,:)),2)));
@@ -80,12 +76,13 @@ end
 if (~isempty(iNN))
   
   if (strcmp(sel,'best'))
-
+    fprintf('candidate examination\n');
+    tic;
     D=feval(distfun,x0,Xsel(x,iNN),distargs{:});
-    %[dist,sortind]=sort(D);
-    %ind = find(dist(1:min(k,length(dist)))<=r);
-    %iNN=iNN(sortind(ind));
-    ind = 
+    [dist,sortind]=sort(D);
+    ind = find(dist(1:min(k,length(dist)))<=r);
+    iNN=iNN(sortind(ind));
+    toc;
     
   else % random
     

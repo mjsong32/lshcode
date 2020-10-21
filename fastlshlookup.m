@@ -4,6 +4,9 @@ function [iNN,cand] = fastlshlookup(x0,x,T,varargin)
 % in the closest (top-1) point. Instead of sorting the distances of
 % candidates in O(logn), simply return the min in O(n).
 
+% measureTime=zeros(1,4);
+% tStart=tic;
+
 distfun='lpnorm';
 switch T(1).type
  case 'lsh', distargs={1};
@@ -24,6 +27,9 @@ end
 
 l = length(T);
 iNN=[];
+
+% measure time
+% measureTime(1)=toc(tStart);
 
 % find the union of buckets in all tables that match query
 for j=1:l
@@ -46,6 +52,9 @@ end
 [iNN,iu]=unique(iNN);
 cand = length(iNN);
 
+% measure time
+% measureTime(2)=toc(tStart);
+
 % now iNN has the collection of candidate indices 
 % we can start examining them
 
@@ -59,6 +68,8 @@ if (~isempty(iNN))
     D=feval(distfun,x0,Xsel(x,iNN),distargs{:});
     [~,min_idx]=min(D);
     iNN=iNN(min_idx);
+    % measure time
+    % measureTime(3)=toc(tStart);
     
   else % random
     
@@ -76,6 +87,11 @@ if (~isempty(iNN))
     iNN = choose;
   end
 end
+
+% measure time
+% measureTime(4)=toc(tStart);
+% disp('Measure time');
+% disp(measureTime);
 
 %%%%%%%%%%%%%%%%%%%%%%%%55 
 function x=Xsel(X,ind)

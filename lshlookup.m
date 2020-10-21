@@ -23,10 +23,14 @@ function [iNN,cand] = lshlookup(x0,x,T,varargin)
 %
 % (C) Greg Shakhnarovich, TTI-Chicago (2008)
 
+% Start measuring time
+measureTime=zeros(1,4);
+% tStart=tic;
+
 distfun='lpnorm';
 switch T(1).type
  case 'lsh', distargs={1};
- case 'e2lsh', distargs={2};
+ case 'e2lsh', distargs={2}; % change chunk size to 1000
 end
 k=1;
 r=inf;
@@ -44,6 +48,9 @@ end
 l = length(T);
 iNN=[];
 
+% measure time
+% measureTime(1)=toc(tStart);
+
 % find the union of buckets in all tables that match query
 for j=1:l
   % look up T_j
@@ -52,11 +59,6 @@ for j=1:l
   % find the bucket in j-th table
   key = lshhash(buck);
   ihash = T(j).bhash{key}; % possible matching buckets
-  
-  % CHECKS
-  %fprintf('buck = %d\n',buck);
-  %fprintf('ihash = %d\n',ihash);
-  %fprintf('j= %d\n',j);
   
   if (~isempty(ihash)) % nothing matches -> MJ: multiple matches?
     b = ihash(find(all(bsxfun(@eq,buck,T(j).buckets(ihash,:)),2)));
@@ -70,6 +72,9 @@ end
 [iNN,iu]=unique(iNN);
 cand = length(iNN);
 
+% measure time
+% measureTime(2)=toc(tStart);
+
 % now iNN has the collection of candidate indices 
 % we can start examining them
 
@@ -80,11 +85,12 @@ end
 if (~isempty(iNN))
   
   if (strcmp(sel,'best'))
-
     D=feval(distfun,x0,Xsel(x,iNN),distargs{:});
     [dist,sortind]=sort(D);
     ind = find(dist(1:min(k,length(dist)))<=r);
     iNN=iNN(sortind(ind));
+    % measure time
+    % measureTime(3)=toc(tStart);
     
   else % random
     
@@ -102,6 +108,12 @@ if (~isempty(iNN))
     iNN = choose;
   end
 end
+
+
+% measure time
+% measureTime(4)=toc(tStart);
+% disp('Measure time');
+% disp(measureTime);
 
 %%%%%%%%%%%%%%%%%%%%%%%%55 
 function x=Xsel(X,ind)
