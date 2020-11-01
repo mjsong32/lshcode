@@ -57,9 +57,9 @@ end
 range = processRange(d,range);
 
 
-switch type, % different algorithms
+switch type % different algorithms
 
-  case 'lsh',  % optimal for Hamming spaces
+  case 'lsh'  % optimal for Hamming spaces
   
    include=setdiff(1:d,exclude);   
    for j=1:l
@@ -73,7 +73,7 @@ switch type, % different algorithms
    end
 
 
- case 'e2lsh',
+ case 'e2lsh'
   
   % set up interval width if necessary
   if (isempty(w))
@@ -97,6 +97,16 @@ switch type, % different algorithms
     I(j).W = w;
     I(j).A = randn(d,k);
     I(j).b = unifrnd(0,w,1,k);
+    I(j).k = k;
+  end
+  
+  case 'hyperplane'
+  
+  for j=1:l
+    % there are k functions determined by random vectors + random shifts
+    % hash key: floor((A'*x-b)/W)
+    I(j).W = 0;
+    I(j).A = randn(d,k);
     I(j).k = k;
   end
    

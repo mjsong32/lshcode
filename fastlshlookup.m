@@ -11,6 +11,7 @@ distfun='lpnorm';
 switch T(1).type
  case 'lsh', distargs={1};
  case 'e2lsh', distargs={2};
+ case 'hyperplane', distargs={2};
 end
 k=1;
 r=inf;

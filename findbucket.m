@@ -12,12 +12,16 @@ function v =findbucket(type,x,I)
 % (C) Greg Shakhnarovich, TTI-Chicago  (2008)
 
 
-switch type,
- case 'lsh',
+switch type
+ case 'lsh'
   v = x(I.d,:)' <= repmat(I.t,size(x,2),1);
   
- case 'e2lsh',
+ case 'e2lsh'
   v = floor((double(x)'*I.A - repmat(I.b,size(x,2),1))/I.W);
+  
+ case 'hyperplane'
+  v = double(x)'*I.A >= 0;
+    
   
 end
 
